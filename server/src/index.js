@@ -62,7 +62,7 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ message: "Internal server error" });
 });
 
-const port = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4000;
 
 if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
   console.error("FATAL: JWT_SECRET is required in production");
@@ -71,8 +71,8 @@ if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
 
 connectDb()
   .then(() => {
-    app.listen(port, () => {
-      console.log(`Server listening on ${port}`);
+    app.listen(PORT, () => {
+      console.log(`Server listening on ${PORT}`);
     });
   })
   .catch((error) => {
