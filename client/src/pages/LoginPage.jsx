@@ -111,9 +111,7 @@ export function LoginPage() {
             />
           </div>
         ) : (
-          <p className="mt-4 text-center text-xs text-zinc-500">
-            Add <code className="text-zinc-400">VITE_GOOGLE_CLIENT_ID</code> to enable Google sign-in.
-          </p>
+          
         )}
 
         <p className="mt-6 text-center text-sm text-zinc-400">
