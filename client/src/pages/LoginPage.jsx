@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 
@@ -85,34 +84,6 @@ export function LoginPage() {
             {busy ? "Signing in…" : "Sign in"}
           </motion.button>
         </form>
-
-        {googleClientId ? (
-          <div className="mt-5 flex flex-col items-center gap-2">
-            <p className="text-xs text-zinc-500">or</p>
-            <GoogleLogin
-              theme="filled_black"
-              size="large"
-              width="100%"
-              text="continue_with"
-              onSuccess={async (cred) => {
-                if (!cred.credential) return;
-                setError("");
-                setBusy(true);
-                try {
-                  await googleLogin(cred.credential);
-                  navigate("/", { replace: true });
-                } catch (err) {
-                  setError(err.message || "Google sign-in failed");
-                } finally {
-                  setBusy(false);
-                }
-              }}
-              onError={() => setError("Google sign-in was cancelled or failed")}
-            />
-          </div>
-        ) : (
-          
-        )}
 
         <p className="mt-6 text-center text-sm text-zinc-400">
           No account?{" "}
