@@ -3,8 +3,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { SPLIT_TEMPLATES } from "../constants/splits";
 
 const emptySet = { reps: 8, weight: 20, status: "working" };
-const MIN_REPS = 6;
-const MAX_REPS = 10;
 const SET_STATUSES = [
   { value: "warmup", label: "Warmup" },
   { value: "working", label: "Working" },
@@ -48,7 +46,6 @@ export function computeVolume(exercises, draft = { weightMode: "eachSide" }) {
 }
 
 export function WorkoutForm({ draft, setDraft, onSubmit, exerciseHistory = {}, onSetComplete, submitLabel = "Save Workout" }) {
-  const [repWarnings, setRepWarnings] = useState({});
   const [completedSets, setCompletedSets] = useState({});
   const [selectedExerciseName, setSelectedExerciseName] = useState("");
   const repInputRefs = useRef({});
@@ -73,23 +70,9 @@ export function WorkoutForm({ draft, setDraft, onSubmit, exerciseHistory = {}, o
 
   const handleRepChange = (exIdx, setIdx, value) => {
     const numericValue = Number(value);
-    const key = warningKey(exIdx, setIdx);
 
     if (!Number.isFinite(numericValue)) return;
-
-    if (numericValue < MIN_REPS || numericValue > MAX_REPS) {
-      setRepWarnings((prev) => ({ ...prev, [key]: `Use a rep range of ${MIN_REPS}-${MAX_REPS}.` }));
-    } else {
-      setRepWarnings((prev) => {
-        const next = { ...prev };
-        delete next[key];
-        return next;
-      });
-    }
-
-    updateSet(exIdx, setIdx, {
-      reps: Math.min(MAX_REPS, Math.max(MIN_REPS, numericValue || MIN_REPS)),
-    });
+    updateSet(exIdx, setIdx, { reps: Math.max(0, numericValue || 0) });
   };
 
   const addExercise = () =>
@@ -344,15 +327,14 @@ export function WorkoutForm({ draft, setDraft, onSubmit, exerciseHistory = {}, o
                 <div />
                 <input
                   type="number"
-                  min={MIN_REPS}
-                  max={MAX_REPS}
+                  min={0}
                   value={set.reps}
                   ref={(node) => {
                     if (node) repInputRefs.current[inputKey(exIdx, setIdx)] = node;
                   }}
                   onChange={(e) => handleRepChange(exIdx, setIdx, e.target.value)}
                   className="premium-input rounded-lg border border-white/10 bg-white/5 p-2 text-sm"
-                  placeholder="Reps (6-10)"
+                  placeholder="Reps"
                 />
                 <motion.input
                   type="number"
@@ -423,9 +405,6 @@ export function WorkoutForm({ draft, setDraft, onSubmit, exerciseHistory = {}, o
                       {draft.weightUnit || "kg"}
                     </p>
                   </>
-                )}
-                {repWarnings[warningKey(exIdx, setIdx)] && (
-                  <p className="col-span-3 text-xs text-amber-300">{repWarnings[warningKey(exIdx, setIdx)]}</p>
                 )}
               </motion.div>
             ))}
